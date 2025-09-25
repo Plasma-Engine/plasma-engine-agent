@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint-test:
-    uses: xkonjin/plasma-engine-infra/.github/workflows/lint-test.yml@main
+    uses: Plasma-Engine/plasma-engine-infra/.github/workflows/lint-test.yml@main
     with:
       service_name: plasma-engine-agent
       python_version: '3.11'
@@ -18,7 +18,7 @@ jobs:
   build-publish:
     needs: lint-test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    uses: xkonjin/plasma-engine-infra/.github/workflows/build-publish.yml@main
+    uses: Plasma-Engine/plasma-engine-infra/.github/workflows/build-publish.yml@main
     with:
       service_name: plasma-engine-agent
       dockerfile_path: ./Dockerfile
@@ -26,7 +26,7 @@ jobs:
     secrets: inherit
 
   security-scan:
-    uses: xkonjin/plasma-engine-infra/.github/workflows/security-scan.yml@main
+    uses: Plasma-Engine/plasma-engine-infra/.github/workflows/security-scan.yml@main
     with:
       service_name: plasma-engine-agent
     secrets: inherit
