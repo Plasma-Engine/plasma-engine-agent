@@ -1,0 +1,44 @@
+# CodeRabbit Configuration
+# Documentation: https://docs.coderabbit.ai/guides/configure-coderabbit
+
+language: "en-US"
+early_access: false
+
+reviews:
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+  tools:
+    ruff:
+      enabled: true
+    mypy:
+      enabled: true
+    eslint:
+      enabled: true
+    prettier:
+      enabled: true
+  path_filters:
+    - "!**/*.md"
+    - "!**/*.txt"
+    - "!**/package-lock.json"
+    - "!**/yarn.lock"
+  instructions: |
+    - Focus on code quality, security, and performance
+    - Check for proper error handling
+    - Verify test coverage for new features
+    - Ensure consistent code style and lint config
+    - Validate API contracts and data schemas
+    - Confirm logging and monitoring hooks exist
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
