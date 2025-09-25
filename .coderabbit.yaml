@@ -6,7 +6,6 @@ early_access: false
 
 reviews:
   high_level_summary: true
-  poem: false
   review_status: true
   collapse_walkthrough: false
   auto_review:
@@ -27,12 +26,11 @@ reviews:
     - "!**/package-lock.json"
     - "!**/yarn.lock"
   instructions: |
-    - Focus on code quality, security, and performance
-    - Check for proper error handling
-    - Verify test coverage for new features
-    - Ensure consistent code style and lint config
-    - Validate API contracts and data schemas
-    - Confirm logging and monitoring hooks exist
+    - Focus on correctness, security, and performance impacts
+    - Require tests or explain why coverage is not needed
+    - Verify logging, telemetry, and error handling paths
+    - Validate API contracts, schemas, and migrations
+    - Flag missing docs or runbooks for operational work
 
 chat:
   auto_reply: true
