@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-test:
+    uses: xkonjin/plasma-engine-infra/.github/workflows/lint-test.yml@main
+    with:
+      service_name: plasma-engine-agent
+      python_version: '3.11'
+      node_version: '20'
+    secrets: inherit
+
+  build-publish:
+    needs: lint-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: xkonjin/plasma-engine-infra/.github/workflows/build-publish.yml@main
+    with:
+      service_name: plasma-engine-agent
+      dockerfile_path: ./Dockerfile
+      build_context: .
+    secrets: inherit
+
+  security-scan:
+    uses: xkonjin/plasma-engine-infra/.github/workflows/security-scan.yml@main
+    with:
+      service_name: plasma-engine-agent
+    secrets: inherit
