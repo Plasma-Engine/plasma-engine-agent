@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import AsyncGenerator, Dict, List, Optional, Union
+from typing import Any, AsyncGenerator, Dict, List, Optional, Union
 
 from loguru import logger
 from playwright.async_api import (
@@ -272,7 +272,7 @@ class BrowserManager:
 
     async def execute_script(
         self, page: Page, script: str, *args: any
-    ) -> any:
+    ) -> Any:
         """Execute JavaScript on a page.
 
         Args:
@@ -282,9 +282,16 @@ class BrowserManager:
 
         Returns:
             Result of script execution
+
+        Raises:
+            Exception: If script execution fails
         """
-        logger.debug(f"Executing script: {script[:100]}...")
-        return await page.evaluate(script, *args)
+        try:
+            logger.debug(f"Executing script: {script[:100]}...")
+            return await page.evaluate(script, *args)
+        except Exception as e:
+            logger.error(f"Script execution failed: {e}")
+            raise
 
     async def take_screenshot(
         self,
@@ -355,18 +362,25 @@ class BrowserManager:
         return pdf
 
     async def set_cookies(
-        self, context: BrowserContext, cookies: List[Dict[str, any]]
+        self, context: BrowserContext, cookies: List[Dict[str, Any]]
     ) -> None:
         """Set cookies in browser context.
 
         Args:
             context: Browser context
             cookies: List of cookie dictionaries
-        """
-        logger.debug(f"Setting {len(cookies)} cookies")
-        await context.add_cookies(cookies)
 
-    async def get_cookies(self, context: BrowserContext) -> List[Dict[str, any]]:
+        Raises:
+            Exception: If cookie setting fails
+        """
+        try:
+            logger.debug(f"Setting {len(cookies)} cookies")
+            await context.add_cookies(cookies)
+        except Exception as e:
+            logger.error(f"Failed to set cookies: {e}")
+            raise
+
+    async def get_cookies(self, context: BrowserContext) -> List[Dict[str, Any]]:
         """Get all cookies from browser context.
 
         Args:
@@ -374,10 +388,17 @@ class BrowserManager:
 
         Returns:
             List of cookie dictionaries
+
+        Raises:
+            Exception: If cookie retrieval fails
         """
-        cookies = await context.cookies()
-        logger.debug(f"Retrieved {len(cookies)} cookies")
-        return cookies
+        try:
+            cookies = await context.cookies()
+            logger.debug(f"Retrieved {len(cookies)} cookies")
+            return cookies
+        except Exception as e:
+            logger.error(f"Failed to get cookies: {e}")
+            raise
 
     async def clear_cookies(self, context: BrowserContext) -> None:
         """Clear all cookies from browser context.
@@ -389,7 +410,7 @@ class BrowserManager:
         await context.clear_cookies()
 
     async def set_storage(
-        self, context: BrowserContext, origin: str, storage: Dict[str, any]
+        self, context: BrowserContext, origin: str, storage: Dict[str, Any]
     ) -> None:
         """Set local storage for an origin.
 
@@ -397,16 +418,23 @@ class BrowserManager:
             context: Browser context
             origin: Origin URL
             storage: Storage dictionary
+
+        Raises:
+            Exception: If storage setting fails
         """
-        logger.debug(f"Setting storage for {origin}")
-        await context.add_init_script(
-            f"""
-            localStorage.clear();
-            for (const [key, value] of Object.entries({storage})) {{
-                localStorage.setItem(key, value);
-            }}
-        """
-        )
+        try:
+            logger.debug(f"Setting storage for {origin}")
+            await context.add_init_script(
+                f"""
+                localStorage.clear();
+                for (const [key, value] of Object.entries({storage})) {{
+                    localStorage.setItem(key, value);
+                }}
+            """
+            )
+        except Exception as e:
+            logger.error(f"Failed to set storage for {origin}: {e}")
+            raise
 
     async def wait_for_selector(
         self,
@@ -484,11 +512,11 @@ class BrowserManager:
             selector, value, timeout=timeout or self.config.timeout
         )
 
-    async def get_health(self) -> Dict[str, any]:
+    async def get_health(self) -> Dict[str, Any]:
         """Get browser manager health status.
 
         Returns:
-            Health status dictionary
+            Health status dictionary with browser status, type, contexts, and pool size
         """
         return {
             "status": "healthy" if self._browser else "not_started",
