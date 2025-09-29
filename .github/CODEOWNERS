@@ -1,3 +1,9 @@
+# Plasma Engine default code owners
+# Adjust team handles as the engineering organisation expands.
+
+*       @plasma-engine/platform-leads
+docs/*  @plasma-engine/product
+infra/* @plasma-engine/devops
 # Global default ownership
 * @Plasma-Engine/platform-eng
 
