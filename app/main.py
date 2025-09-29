@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import AgentSettings, get_settings
+from .routers import browser
 
 
 def create_app(settings: Optional[AgentSettings] = None) -> FastAPI:
@@ -22,6 +23,9 @@ def create_app(settings: Optional[AgentSettings] = None) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Include routers
+    app.include_router(browser.router)
 
     @app.get("/health", tags=["health"])
     def health_check() -> Dict[str, Optional[str]]:
