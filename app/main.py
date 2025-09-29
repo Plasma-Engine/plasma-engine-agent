@@ -6,7 +6,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import AgentSettings, get_settings
-from .routers import browser
+from .routers import browser, workflows
+
+# Import agent router if it exists
+try:
+    from .routers import agent
+    HAS_AGENT_ROUTER = True
+except ImportError:
+    HAS_AGENT_ROUTER = False
 
 
 def create_app(settings: Optional[AgentSettings] = None) -> FastAPI:
@@ -26,6 +33,9 @@ def create_app(settings: Optional[AgentSettings] = None) -> FastAPI:
 
     # Include routers
     app.include_router(browser.router)
+    app.include_router(workflows.router)
+    if HAS_AGENT_ROUTER:
+        app.include_router(agent.router)
 
     @app.get("/health", tags=["health"])
     def health_check() -> Dict[str, Optional[str]]:

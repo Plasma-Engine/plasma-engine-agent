@@ -1,0 +1,428 @@
+# Workflow Engine Examples
+# Collection of sample workflow definitions demonstrating various features
+
+---
+# Example 1: Simple Sequential Workflow
+id: simple-sequential
+name: Simple Sequential Workflow
+description: Basic workflow with sequential steps
+version: 1.0.0
+initial_step: fetch_data
+
+variables:
+  api_endpoint: "https://api.example.com/data"
+  timeout: 30
+
+steps:
+  - id: fetch_data
+    name: Fetch Data from API
+    type: task
+    action: http_request
+    params:
+      method: GET
+      url: "{{ variables.api_endpoint }}"
+      timeout: "{{ variables.timeout }}"
+    timeout_seconds: 30
+    retry_policy:
+      max_attempts: 3
+      initial_delay_seconds: 1.0
+      backoff_multiplier: 2.0
+      max_delay_seconds: 10.0
+    next_on_success: [validate_data]
+    next_on_failure: [error_handler]
+
+  - id: validate_data
+    name: Validate Response Data
+    type: task
+    action: validate_schema
+    params:
+      schema_type: json
+      required_fields: [id, name, status]
+    next_on_success: [process_data]
+    next_on_failure: [error_handler]
+
+  - id: process_data
+    name: Process and Transform Data
+    type: task
+    action: transform_data
+    params:
+      transformations:
+        - normalize_timestamps
+        - extract_metadata
+        - calculate_metrics
+    next_on_success: [save_results]
+
+  - id: save_results
+    name: Save Processed Results
+    type: task
+    action: save_to_database
+    params:
+      table: processed_data
+      conflict_action: update
+    next_on_success: []
+
+  - id: error_handler
+    name: Handle Errors
+    type: task
+    action: log_error
+    params:
+      severity: error
+      notify: true
+    next_on_success: []
+
+---
+# Example 2: Conditional Workflow
+id: conditional-processing
+name: Conditional Data Processing
+description: Workflow with conditional branching based on data analysis
+version: 1.0.0
+initial_step: analyze_input
+
+steps:
+  - id: analyze_input
+    name: Analyze Input Data
+    type: task
+    action: analyze_data
+    params:
+      analysis_type: quality_check
+    next_on_success: [check_quality]
+
+  - id: check_quality
+    name: Quality Gate Check
+    type: task
+    action: evaluate_quality
+    condition:
+      expression: "quality_score >= 80"
+      variables:
+        quality_score: 85
+    next_on_success: [high_quality_path]
+    next_on_failure: [low_quality_path]
+
+  - id: high_quality_path
+    name: Process High Quality Data
+    type: task
+    action: standard_processing
+    params:
+      optimization_level: high
+    next_on_success: [publish_results]
+
+  - id: low_quality_path
+    name: Process Low Quality Data
+    type: task
+    action: enhanced_processing
+    params:
+      optimization_level: low
+      data_cleaning: true
+      outlier_removal: true
+    next_on_success: [manual_review]
+
+  - id: manual_review
+    name: Queue for Manual Review
+    type: task
+    action: queue_review
+    params:
+      priority: high
+      assignee: data_quality_team
+    next_on_success: [publish_results]
+
+  - id: publish_results
+    name: Publish Final Results
+    type: task
+    action: publish_data
+    params:
+      destination: data_warehouse
+      notification: true
+    next_on_success: []
+
+---
+# Example 3: Parallel Execution Workflow
+id: parallel-processing
+name: Parallel Data Processing Pipeline
+description: Process multiple data sources concurrently
+version: 1.0.0
+initial_step: initialize
+
+steps:
+  - id: initialize
+    name: Initialize Processing
+    type: task
+    action: setup_environment
+    params:
+      resource_allocation: high
+    next_on_success: [parallel_fetch]
+
+  - id: parallel_fetch
+    name: Parallel Data Fetching
+    type: parallel
+    parallel_steps: [fetch_source_a, fetch_source_b, fetch_source_c]
+    next_on_success: [merge_data]
+
+  - id: fetch_source_a
+    name: Fetch Source A
+    type: task
+    action: fetch_data
+    params:
+      source: api_a
+      endpoint: /data/latest
+    timeout_seconds: 30
+
+  - id: fetch_source_b
+    name: Fetch Source B
+    type: task
+    action: fetch_data
+    params:
+      source: database_b
+      query: "SELECT * FROM current_data"
+    timeout_seconds: 45
+
+  - id: fetch_source_c
+    name: Fetch Source C
+    type: task
+    action: fetch_data
+    params:
+      source: file_storage_c
+      path: /data/current/*.json
+    timeout_seconds: 60
+
+  - id: merge_data
+    name: Merge All Data Sources
+    type: task
+    action: merge_datasets
+    params:
+      merge_strategy: outer_join
+      key_column: id
+    next_on_success: [parallel_processing]
+
+  - id: parallel_processing
+    name: Parallel Processing
+    type: parallel
+    parallel_steps: [calculate_metrics, generate_reports, update_cache]
+    next_on_success: [finalize]
+
+  - id: calculate_metrics
+    name: Calculate Metrics
+    type: task
+    action: calculate_analytics
+    params:
+      metrics: [mean, median, std_dev, percentiles]
+
+  - id: generate_reports
+    name: Generate Reports
+    type: task
+    action: create_reports
+    params:
+      formats: [pdf, html, json]
+
+  - id: update_cache
+    name: Update Cache
+    type: task
+    action: cache_update
+    params:
+      ttl: 3600
+
+  - id: finalize
+    name: Finalize Processing
+    type: task
+    action: cleanup
+    next_on_success: []
+
+---
+# Example 4: Retry and Error Handling
+id: robust-etl
+name: Robust ETL Pipeline
+description: ETL workflow with comprehensive retry and error handling
+version: 1.0.0
+initial_step: extract
+
+steps:
+  - id: extract
+    name: Extract Data
+    type: task
+    action: extract_data
+    params:
+      source: production_database
+      batch_size: 1000
+    timeout_seconds: 120
+    retry_policy:
+      max_attempts: 5
+      initial_delay_seconds: 2.0
+      backoff_multiplier: 3.0
+      max_delay_seconds: 60.0
+      retry_on_states: [FAILED]
+    next_on_success: [transform]
+    next_on_failure: [extract_fallback]
+
+  - id: extract_fallback
+    name: Extract from Backup
+    type: task
+    action: extract_data
+    params:
+      source: backup_database
+      batch_size: 500
+    retry_policy:
+      max_attempts: 3
+      initial_delay_seconds: 5.0
+      backoff_multiplier: 2.0
+      max_delay_seconds: 30.0
+    next_on_success: [transform]
+    next_on_failure: [critical_error]
+
+  - id: transform
+    name: Transform Data
+    type: task
+    action: transform_data
+    params:
+      transformations:
+        - clean_nulls
+        - normalize_formats
+        - apply_business_rules
+    timeout_seconds: 180
+    retry_policy:
+      max_attempts: 2
+      initial_delay_seconds: 1.0
+      backoff_multiplier: 2.0
+    next_on_success: [validate]
+    next_on_failure: [transform_error]
+
+  - id: validate
+    name: Validate Transformed Data
+    type: task
+    action: validate_data
+    params:
+      validation_rules:
+        - check_data_types
+        - check_constraints
+        - check_referential_integrity
+    next_on_success: [load]
+    next_on_failure: [validation_error]
+
+  - id: load
+    name: Load to Data Warehouse
+    type: task
+    action: load_data
+    params:
+      destination: data_warehouse
+      mode: upsert
+      partition: date
+    timeout_seconds: 300
+    retry_policy:
+      max_attempts: 3
+      initial_delay_seconds: 5.0
+      backoff_multiplier: 2.0
+    next_on_success: [success_notification]
+    next_on_failure: [load_error]
+
+  - id: transform_error
+    name: Handle Transform Error
+    type: task
+    action: handle_error
+    params:
+      error_type: transform_failure
+      action: quarantine_data
+    next_on_success: [error_notification]
+
+  - id: validation_error
+    name: Handle Validation Error
+    type: task
+    action: handle_error
+    params:
+      error_type: validation_failure
+      action: create_error_report
+    next_on_success: [error_notification]
+
+  - id: load_error
+    name: Handle Load Error
+    type: task
+    action: handle_error
+    params:
+      error_type: load_failure
+      action: rollback_transaction
+    next_on_success: [error_notification]
+
+  - id: critical_error
+    name: Critical Error Handler
+    type: task
+    action: critical_error_handler
+    params:
+      escalate: true
+      notify_team: data_engineering
+    next_on_success: []
+
+  - id: success_notification
+    name: Send Success Notification
+    type: task
+    action: send_notification
+    params:
+      channel: slack
+      message: "ETL pipeline completed successfully"
+    next_on_success: []
+
+  - id: error_notification
+    name: Send Error Notification
+    type: task
+    action: send_notification
+    params:
+      channel: slack
+      message: "ETL pipeline failed - check logs"
+      priority: high
+    next_on_success: []
+
+---
+# Example 5: Wait and Scheduling
+id: scheduled-processing
+name: Scheduled Processing Workflow
+description: Workflow with delays and scheduled execution
+version: 1.0.0
+initial_step: wait_for_data
+
+steps:
+  - id: wait_for_data
+    name: Wait for Data Availability
+    type: wait
+    params:
+      duration_seconds: 300  # Wait 5 minutes
+    next_on_success: [check_data_ready]
+
+  - id: check_data_ready
+    name: Check if Data is Ready
+    type: task
+    action: check_data_availability
+    condition:
+      expression: "data_ready == True"
+      variables:
+        data_ready: true
+    next_on_success: [process_batch]
+    next_on_failure: [wait_longer]
+
+  - id: wait_longer
+    name: Wait Additional Time
+    type: wait
+    params:
+      duration_seconds: 600  # Wait 10 more minutes
+    next_on_success: [force_process]
+
+  - id: process_batch
+    name: Process Data Batch
+    type: task
+    action: batch_processing
+    params:
+      batch_size: 5000
+    next_on_success: [schedule_next]
+
+  - id: force_process
+    name: Force Process Available Data
+    type: task
+    action: batch_processing
+    params:
+      batch_size: 1000
+      partial_processing: true
+    next_on_success: [schedule_next]
+
+  - id: schedule_next
+    name: Schedule Next Run
+    type: task
+    action: schedule_workflow
+    params:
+      workflow_id: scheduled-processing
+      delay_seconds: 3600  # Schedule 1 hour from now
+    next_on_success: []

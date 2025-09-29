@@ -18,6 +18,13 @@ class AgentSettings(BaseSettings):
     anthropic_api_key: Optional[str] = None
     default_llm_model: str = "gpt-4o-mini"
 
+    # Workflow engine settings
+    redis_url: str = "redis://localhost:6379/0"
+    celery_broker_url: str = "redis://localhost:6379/1"
+    celery_result_backend: str = "redis://localhost:6379/2"
+    workflow_max_parallel_steps: int = 10
+    workflow_default_timeout: int = 300
+
 
 @lru_cache
 def get_settings() -> AgentSettings:
