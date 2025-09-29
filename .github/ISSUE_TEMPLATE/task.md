@@ -1,4 +1,32 @@
 ---
+name: "📋 Implementation Task"
+about: "Track actionable work linked to an epic or feature"
+title: "[TASK] <short description>"
+labels: ["type:task", "needs-triage"]
+assignees: []
+---
+
+## Summary
+
+<!-- What needs to be done and why? -->
+
+## Linked Epic / Feature
+
+- Parent ticket:
+- Sprint / milestone:
+
+## Checklist
+
+- [ ] Requirements understood
+- [ ] Implementation complete
+- [ ] Tests added / updated
+- [ ] Docs updated
+- [ ] Demo / validation recorded
+
+## Notes
+
+<!-- Implementation details, decisions, or follow-up actions. -->
+---
 name: "Engineering Task"
 about: "Track implementation work aligned to an epic or feature"
 title: "[Task] <concise summary>"

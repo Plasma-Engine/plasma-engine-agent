@@ -1,4 +1,40 @@
 ---
+name: "🧭 ADR Change Proposal"
+about: "Request updates to an existing Architecture Decision Record"
+title: "[ADR] <ADR number> - <short description>"
+labels: ["type:adr", "needs-architecture-review"]
+assignees: []
+---
+
+## Current ADR
+
+- ADR number:
+- Link:
+
+## Problem Statement
+
+<!-- What limitation or issue motivates the change? -->
+
+## Proposed Change
+
+<!-- Summarise the new decision, alternatives, or scope adjustments. -->
+
+## Impact Assessment
+
+- Repositories affected:
+- Deployment / infrastructure considerations:
+- Security / compliance implications:
+
+## Rollout Plan
+
+- Migration steps:
+- Validation strategy:
+- Rollback strategy:
+
+## Additional Context
+
+<!-- Attach diagrams, references, or related discussions. -->
+---
 name: "ADR Change"
 about: "Request an update or addition to an Architecture Decision Record"
 title: "[ADR] <title of proposed decision>"

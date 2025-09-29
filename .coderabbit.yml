@@ -1,0 +1,20 @@
+version: 1
+reviewers:
+  min_approvals: 1
+  enable_auto_assign: true
+rules:
+  - targets: ["**/*.py"]
+    severity: high
+    checks:
+      - type: tests
+      - type: lint
+  - targets: ["**/*.ts", "**/*.tsx"]
+    severity: high
+    checks:
+      - type: tests
+      - type: lint
+notifications:
+  slack:
+    enabled: true
+    channel: "#plasma-engine-devops"
+

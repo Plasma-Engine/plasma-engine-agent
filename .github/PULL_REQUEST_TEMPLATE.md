@@ -1,3 +1,25 @@
+## Summary
+
+<!-- Provide a concise description of what this PR changes and why. -->
+
+## Testing
+
+- [ ] `make lint`
+- [ ] `make test`
+- [ ] Manual validation (describe below)
+
+### Manual Validation Notes
+
+<!-- Screenshots, commands, or links that demonstrate the change works. -->
+
+## Deployment & Rollback
+
+- Rollout plan:
+- Rollback plan:
+
+## Additional Context
+
+<!-- Link issues, ADRs, design docs, Slack threads, etc. -->
 # Summary
 
 <!-- Provide a concise description of the change. Link to related issues (e.g. PE-XX). -->

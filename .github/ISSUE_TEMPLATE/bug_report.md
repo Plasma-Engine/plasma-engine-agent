@@ -1,4 +1,44 @@
 ---
+name: "🐞 Bug Report"
+about: "Help us squash defects by filing a structured report"
+title: "[BUG] <short description>"
+labels: ["type:bug", "needs-triage"]
+assignees: []
+---
+
+## Summary
+
+<!-- Describe the unexpected behaviour in 1-2 sentences. -->
+
+## Environment
+
+- Service / repo:
+- Branch / commit:
+- Deployment target (local, staging, prod):
+
+## Steps to Reproduce
+
+1. 
+2. 
+3. 
+
+## Expected Behaviour
+
+<!-- What did you expect to happen? -->
+
+## Actual Behaviour
+
+<!-- What actually happened? Include stack traces, screenshots, or logs. -->
+
+## Impact
+
+- Severity (blocker, high, medium, low):
+- Affected users / workflows:
+
+## Additional Context
+
+<!-- Feature flags, configs, related tickets, or mitigation attempts. -->
+---
 name: "Bug Report"
 about: "Report a defect in the Plasma Engine platform"
 title: "[Bug] <concise summary>"
